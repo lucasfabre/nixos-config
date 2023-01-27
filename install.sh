@@ -44,3 +44,9 @@ mkdir /mnt/boot/efi
 nixos-generate-config --root /mnt
 nixos-install
 
+# flakes rebuild
+nixos-rebuild --flake .#framework switch --install-bootloader.
+
+# secureboot support via lanzaboote
+nix-shell --packages sbctl
+sudo sbctl create-keys
