@@ -4,13 +4,11 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    lanzaboote = {
-      url = "github:nix-community/lanzaboote";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
+    # modules
+    secureboottpm.url = "./secureboottpm";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, lanzaboote }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, secureboottpm }:
     let
       system = "x86_64-linux";
     in {
@@ -21,25 +19,7 @@
         inherit system;
         modules = [
           ./configuration.nix
-
-          lanzaboote.nixosModules.lanzaboote
-
-          ({ config, pkgs, ... }: {
-            environment.systemPackages = [
-              pkgs.sbctl
-              pkgs.cryptsetup
-              pkgs.tpm2-tss
-            ];
-
-            boot.lanzaboote = {
-              enable = true;
-
-              configurationLimit = 20;
-              pkiBundle = "/etc/secureboot";
-            };
-            security.tpm2.enable = true;
-          })
-        ];
+       ] ++ secureboottpm.modules;
       };
     };
 }
