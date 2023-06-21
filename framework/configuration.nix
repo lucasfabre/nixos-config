@@ -7,6 +7,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./hosts.nix
   ];
 
 
@@ -18,6 +19,8 @@
       canTouchEfiVariables = true;
     };
   };
+  boot.loader.systemd-boot.enable = true;
+
   boot.bootspec.enable = true;
   boot.kernelParams = ["quiet"];
   boot.initrd.availableKernelModules = ["tpm_crb"];
@@ -25,7 +28,9 @@
 
   boot.plymouth = {
     enable = true;
+    theme = "cross_hud";
     themePackages = [
+      pkgs.adi1090x-plymouth-themes
     ];
   };
 
@@ -109,7 +114,13 @@
     wget
     git
     gnomeExtensions.dash-to-dock
+    gnome.gnome-terminal
+    fprintd
   ];
+
+  services.flatpak.enable = true;
+
+  services.fprintd.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -133,6 +144,26 @@
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
+  virtualisation = {
+    podman = {
+      enable = true;
+
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings = {
+        dns_enabled = true;
+      };
+    };
+  };
+
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  };
+
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
@@ -145,6 +176,33 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "unstable"; # Did you read the comment?
-  services.xserver.videoDrivers = lib.mkForce [ "virtualbox" "vmware" "modesetting" ];
+  #services.xserver.videoDrivers = lib.mkForce [ "virtualbox" "vmware" "modesetting" ];
+ 
+  nixpkgs.config.allowUnfree = true; 
+  nix = {
+    package = pkgs.nixFlakes;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+  };
+
+  # Disable the power-profiles-daemon because it conflicts with TLP. power-profiles-daemon is enabled by default in GNOME.
+  services.power-profiles-daemon.enable = false;
+  services.tlp = {
+    enable = true;
+    settings = {
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+
+      CPU_ENERGY_PERF_POLICY_ON_BAT = "power";
+      CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
+
+      CPU_MIN_PERF_ON_AC = 0;
+      CPU_MAX_PERF_ON_AC = 100;
+      CPU_MIN_PERF_ON_BAT = 0;
+      CPU_MAX_PERF_ON_BAT = 30;
+    };
+  };
+
 }
 

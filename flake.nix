@@ -5,10 +5,10 @@
     nixpkgs.url = "nixpkgs/nixos-unstable";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     # modules
-    secureboottpm.url = "./secureboottpm";
+    # secureboottpm.url = "./secureboottpm";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, secureboottpm }:
+  outputs = { self, nixpkgs, nixpkgs-unstable }:
     let
       system = "x86_64-linux";
     in {
@@ -18,8 +18,8 @@
       nixosConfigurations."framework" = nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
-          ./configuration.nix
-       ] ++ secureboottpm.modules;
+          ./framework/configuration.nix
+       ];# ++ secureboottpm.modules;
       };
     };
 }
