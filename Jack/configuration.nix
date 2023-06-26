@@ -27,9 +27,8 @@
     };
   };
 
-  boot.bootspec.enable = true;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
   boot.kernelParams = ["quiet"];
-  boot.initrd.availableKernelModules = ["tpm_crb"];
   boot.initrd.systemd.enable = true;
 
   boot.plymouth = {
@@ -54,6 +53,15 @@
     useXkbConfig = true; # use xkbOptions in tty.
   };
 
+  fonts = {
+    fontDir.enable = true;
+    enableDefaultFonts = true;
+    fonts = with pkgs; [
+      noto-fonts
+      noto-fonts-emoji
+    ];
+  };
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -73,20 +81,29 @@
 
   # Enable sound.
   sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  hardware.pulseaudio = {
+    enable = false;
+    tcp = {
+      enable = true;
+      anonymousClients.allowedIpRanges = ["127.0.0.1"];
+    };
+  };
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
+
+  services.dbus.enable = true;
+  xdg.portal = {
+    enable = true;
+    wlr.enable = true;
+    extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+  };
+
+  programs.noisetorch.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -120,18 +137,14 @@
     wget
     git
     gnomeExtensions.dash-to-dock
+    gnomeExtensions.useless-gaps
+    gnomeExtensions.blur-my-shell
+    gnomeExtensions.tray-icons-reloaded
+    gnomeExtensions.material-you-color-theming
     gnome.gnome-terminal
   ];
 
   services.flatpak.enable = true;
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
 
   # List services that you want to enable:
 
@@ -161,6 +174,27 @@
     };
   };
 
+  nixpkgs.config.packageOverrides = pkgs: {
+    steam = pkgs.steam.override {
+      extraPkgs = pkgs: with pkgs; [
+        gamescope
+        mangohud
+
+	# https://github.com/NixOS/nixpkgs/issues/162562#issuecomment-1523177264
+	xorg.libXcursor
+        xorg.libXi
+        xorg.libXinerama
+        xorg.libXScrnSaver
+        libpng
+        libpulseaudio
+        libvorbis
+        stdenv.cc.cc.lib
+        libkrb5
+        keyutils
+      ];
+    };
+  };
+
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
@@ -179,8 +213,13 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "unstable"; # Did you read the comment?
-  #services.xserver.videoDrivers = lib.mkForce [ "virtualbox" "vmware" "modesetting" ];
- 
+
+  services.xserver.videoDrivers = ["amdgpu"];
+  hardware.opengl.driSupport = true;
+  hardware.opengl.driSupport32Bit = true;
+  boot.initrd.kernelModules = [ "amdgpu" ];
+  programs.gamemode.enable = true;
+
   nixpkgs.config.allowUnfree = true; 
   nix = {
     package = pkgs.nixFlakes;
@@ -189,7 +228,6 @@
     '';
   };
 
-  # Disable the power-profiles-daemon because it conflicts with TLP. power-profiles-daemon is enabled by default in GNOME.
   services.power-profiles-daemon.enable = false;
 }
 
