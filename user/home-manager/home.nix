@@ -17,6 +17,7 @@
 
   nixpkgs.config.permittedInsecurePackages = [
     "openssl-1.1.1u"
+    "openssl-1.1.1v"
   ];
 
   home.packages = with pkgs; [
@@ -25,6 +26,10 @@
     gnome.gnome-tweaks
     gnome.gnome-terminal
     gnome-extension-manager
+    unzip
+    libgcrypt
+    faudio
+    python310Packages.libsass
     oh-my-posh
     dconf
     nerdfonts
@@ -37,6 +42,12 @@
     distrobox
     gamescope
     youtube-music
+    wine
+    winetricks
+    protontricks
+    xdotool
+    libnghttp2
+    steamtinkerlaunch
     lazygit
     github-desktop
     github-cli
@@ -75,6 +86,8 @@
     XDG_DATA_HOME   = "$HOME/.local/share";
     XDG_STATE_HOME  = "$HOME/.local/state";
     XDG_BIN_HOME    = "$HOME/.local/bin";
+
+    STEAM_EXTRA_COMPAT_TOOL_PATHS = "$HOME/.local/share/Steam/compatibilitytools.d/";
  };
 
   # Let Home Manager install and manage itself.
