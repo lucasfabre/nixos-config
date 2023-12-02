@@ -7,8 +7,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./hosts.nix
-  ];
+  ] ++ lib.optional (builtins.pathExists ./hosts.nix) ./hosts.nix;
 
 
   # Use systemd-boot

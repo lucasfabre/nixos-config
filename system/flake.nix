@@ -3,9 +3,7 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-unstable";
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # modules
-    # secureboottpm.url = "./secureboottpm";
+    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable }:
@@ -19,7 +17,13 @@
         inherit system;
         modules = [
           ./framework/configuration.nix
-       ];# ++ secureboottpm.modules;
+       ];
+      };
+      nixosConfigurations."jack" = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          ./jack/configuration.nix
+        ];
       };
     };
 }
