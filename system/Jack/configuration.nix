@@ -21,15 +21,16 @@
     grub = {
         enable = true;
         efiSupport = true;
-        version = 2;
         device = "nodev";
         useOSProber = true;
     };
   };
 
   boot.kernelPackages = pkgs.linuxPackages_zen;
-  boot.kernelParams = ["quiet"];
+  boot.kernelParams = ["quiet" "amdgpu.ppfeaturemask=0xfff7ffff"];
   boot.initrd.systemd.enable = true;
+  boot.tmp.cleanOnBoot = true;
+  boot.loader.grub.configurationLimit = 5;
 
   boot.plymouth = {
     enable = true;
@@ -48,15 +49,15 @@
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
   console = {
-    font = "Lat2-Terminus16";
+    # disabled at least temporarly (https://github.com/NixOS/nixpkgs/issues/257904)
+    #  font = "Lat2-Terminus16";
     #  keyMap = "us";
     useXkbConfig = true; # use xkbOptions in tty.
   };
 
   fonts = {
     fontDir.enable = true;
-    enableDefaultFonts = true;
-    fonts = with pkgs; [
+    packages = with pkgs; [
       noto-fonts
       noto-fonts-emoji
     ];
@@ -96,6 +97,12 @@
     pulse.enable = true;
   };
 
+  hardware.bluetooth.settings = {
+    General = {
+      Enable = "Source,Sink,Media,Socket";
+    };
+  };
+
   services.dbus.enable = true;
   xdg.portal = {
     enable = true;
@@ -104,6 +111,7 @@
   };
 
   programs.noisetorch.enable = true;
+  programs.corectrl.enable  = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -115,7 +123,7 @@
     createHome = true;
     shell = pkgs.zsh;
     home = "/home/lucas";
-    extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       pkgs.zsh
     ];
@@ -140,6 +148,7 @@
     gnomeExtensions.useless-gaps
     gnomeExtensions.blur-my-shell
     gnomeExtensions.tray-icons-reloaded
+    gnomeExtensions.gsconnect
     gnomeExtensions.material-you-color-theming
     gnome.gnome-terminal
   ];
@@ -155,10 +164,15 @@
   };
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 22 ];
-  networking.firewall.allowedUDPPorts = [ 22 ];
+  networking.firewall.allowedTCPPorts = [ 22 3389 5000 8000 ];
+  networking.firewall.allowedUDPPorts = [ 22 3389 5000 8000 ];
+  networking.firewall.allowedTCPPortRanges = [ { from = 1714; to = 1764; } ];
+  networking.firewall.allowedUDPPortRanges = [ { from = 1714; to = 1764; } ];
+  
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  # programs.kdeconnect.enable = true;
 
   virtualisation = {
     podman = {
@@ -201,6 +215,17 @@
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
 
+    nixpkgs.overlays = [
+    (final: prev: {
+      steam = prev.steam.override ({ extraPkgs ? pkgs': [], ... }: {
+        extraPkgs = pkgs': (extraPkgs pkgs') ++ (with pkgs'; [
+          libgdiplus
+          gnutls
+        ]);
+      });
+    })
+  ];
+
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
   # accidentally delete configuration.nix.
@@ -219,6 +244,21 @@
   hardware.opengl.driSupport32Bit = true;
   boot.initrd.kernelModules = [ "amdgpu" ];
   programs.gamemode.enable = true;
+
+  # Graphics tablet support
+  # hardware.opentabletdriver.enable = true;
+  # hardware.opentabletdriver.daemon.enable = true;
+
+  # Add amdvlk as an option
+  hardware.opengl.extraPackages = with pkgs; [
+    amdvlk
+  ];
+  # For 32 bit applications 
+  # Only available on unstable
+  hardware.opengl.extraPackages32 = with pkgs; [
+    driversi686Linux.amdvlk
+  ];
+
 
   nixpkgs.config.allowUnfree = true; 
   nix = {

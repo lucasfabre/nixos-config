@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   # Home Manager needs a bit of information about you and the paths it should
@@ -13,12 +13,18 @@
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "23.05"; # Please read the comment before changing.
+  home.stateVersion = "24.05";
 
   nixpkgs.config.permittedInsecurePackages = [
-    "openssl-1.1.1u"
-    "openssl-1.1.1v"
   ];
+
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "vscode"
+    "steam-run"
+    "steam-original"
+    "github-copilot-cli"
+  ];
+
 
   home.packages = with pkgs; [
     neovim
@@ -26,10 +32,8 @@
     gnome.gnome-tweaks
     gnome.gnome-terminal
     gnome-extension-manager
+    papirus-icon-theme
     unzip
-    libgcrypt
-    faudio
-    python310Packages.libsass
     oh-my-posh
     dconf
     nerdfonts
@@ -37,27 +41,26 @@
     nodejs
     python3
     ripgrep
+    rclone
     bat
     zoxide
     distrobox
     gamescope
-    youtube-music
     wine
     winetricks
     protontricks
-    xdotool
-    libnghttp2
     steamtinkerlaunch
     lazygit
     github-desktop
     github-cli
     github-copilot-cli
     gitAndTools.gitflow
-    firefox
   ];
 
   home.file = {
   };
+
+  services.easyeffects.enable = true;
 
   dconf = {
     enable = true;
@@ -88,7 +91,7 @@
     XDG_BIN_HOME    = "$HOME/.local/bin";
 
     STEAM_EXTRA_COMPAT_TOOL_PATHS = "$HOME/.local/share/Steam/compatibilitytools.d/";
- };
+  };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
