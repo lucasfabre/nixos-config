@@ -23,6 +23,8 @@
         inherit system;
         modules = [
           ./jack/configuration.nix
+          ./base.nix
+          ./gnome.nix
         ];
       };
     };
