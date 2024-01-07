@@ -77,7 +77,9 @@
 
 
   # Enable CUPS to print documents.
-  # services.printing.enable = true;
+  services.printing.enable = true;
+  # Enable firmware updates by fwupd
+  services.fwupd.enable = true;
 
   # Enable sound.
   sound.enable = true;
@@ -110,7 +112,6 @@
   };
 
   programs.noisetorch.enable = true;
-  programs.corectrl.enable  = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -137,18 +138,22 @@
     ];
   };
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
   environment.systemPackages = with pkgs; [
     vim
     wget
     git
+    gnomeExtensions.user-themes
     gnomeExtensions.dash-to-dock
-    gnomeExtensions.useless-gaps
+    gnomeExtensions.dash-to-panel
     gnomeExtensions.blur-my-shell
+    gnomeExtensions.rounded-corners
+    gnomeExtensions.transparent-top-bar
+    gnomeExtensions.rounded-window-corners
     gnomeExtensions.tray-icons-reloaded
+    gnomeExtensions.just-perfection
+    gnomeExtensions.tiling-assistant
     gnomeExtensions.gsconnect
-    gnomeExtensions.material-you-color-theming
+    gnomeExtensions.gamemode-indicator-in-system-settings
     gnome.gnome-terminal
   ];
 
@@ -162,14 +167,8 @@
     settings.PermitRootLogin = "yes";
   };
 
-  # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 22 3389 5000 8000 ];
-  networking.firewall.allowedUDPPorts = [ 22 3389 5000 8000 ];
-  networking.firewall.allowedTCPPortRanges = [ { from = 1714; to = 1764; } ];
-  networking.firewall.allowedUDPPortRanges = [ { from = 1714; to = 1764; } ];
-  
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+  # Disable the firewall
+  networking.firewall.enable = false;
 
   # programs.kdeconnect.enable = true;
 
@@ -193,8 +192,8 @@
         gamescope
         mangohud
 
-	# https://github.com/NixOS/nixpkgs/issues/162562#issuecomment-1523177264
-	xorg.libXcursor
+        # https://github.com/NixOS/nixpkgs/issues/162562#issuecomment-1523177264
+        xorg.libXcursor
         xorg.libXi
         xorg.libXinerama
         xorg.libXScrnSaver
@@ -214,7 +213,7 @@
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
 
-    nixpkgs.overlays = [
+  nixpkgs.overlays = [
     (final: prev: {
       steam = prev.steam.override ({ extraPkgs ? pkgs': [], ... }: {
         extraPkgs = pkgs': (extraPkgs pkgs') ++ (with pkgs'; [
@@ -241,12 +240,9 @@
   services.xserver.videoDrivers = ["amdgpu"];
   hardware.opengl.driSupport = true;
   hardware.opengl.driSupport32Bit = true;
+  hardware.opentabletdriver.enable = true;
   boot.initrd.kernelModules = [ "amdgpu" ];
   programs.gamemode.enable = true;
-
-  # Graphics tablet support
-  # hardware.opentabletdriver.enable = true;
-  # hardware.opentabletdriver.daemon.enable = true;
 
   # Add amdvlk as an option
   hardware.opengl.extraPackages = with pkgs; [

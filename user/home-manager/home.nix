@@ -30,9 +30,9 @@
     neovim
     vscode
     gnome.gnome-tweaks
-    gnome.gnome-terminal
     gnome-extension-manager
     papirus-icon-theme
+    colloid-icon-theme
     unzip
     oh-my-posh
     dconf
@@ -40,10 +40,22 @@
     clang
     nodejs
     python3
-    ripgrep
     rclone
+    ripgrep
+    silver-searcher
+    delta
+    du-dust
+    fd
     bat
+    eza
+    fzf
+    jq
     zoxide
+    thefuck
+    tldr
+    neofetch
+    nnn
+    htop
     distrobox
     gamescope
     wine
@@ -55,10 +67,36 @@
     github-cli
     github-copilot-cli
     gitAndTools.gitflow
+    gradience
   ];
 
-  home.file = {
-  };
+  # Package overlay
+  nixpkgs.overlays = [
+    (final: prev: {
+      gradience = prev.gradience.overrideAttrs {
+        version = "0.8.0-beta1";
+        src = fetchGit {
+          url = "https://github.com/GradienceTeam/Gradience.git";
+          ref = "main";
+          rev = "c878099d15a5488c5d6b4bc6dbb1a283a3032da0";
+          submodules = true;
+        };
+        patches = prev.gradience.patches ++ [
+          ./gradience/fix-permission-errors.patch
+        ];
+        propagatedBuildInputs = with pkgs.python3Packages; [
+          anyascii
+          jinja2
+          lxml
+          material-color-utilities
+          pygobject3
+          svglib
+          yapsy
+          libsass
+        ];
+      };
+    })
+  ];
 
   services.easyeffects.enable = true;
 
@@ -69,6 +107,13 @@
         color-scheme = "prefer-dark";
       };
     };
+  };
+
+  services.syncthing = {
+    enable = true;
+    extraOptions = [
+      "--gui-address=127.0.0.1:8384"
+    ];
   };
 
   # You can also manage environment variables but you will have to manually
