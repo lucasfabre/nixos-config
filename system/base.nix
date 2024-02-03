@@ -82,7 +82,7 @@
     createHome = true;
     shell = pkgs.zsh;
     home = "/home/lucas";
-    extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "libvirtd" "qemu-libvirtd" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       pkgs.zsh
     ];
@@ -115,7 +115,11 @@
   # Disable the firewall
   networking.firewall.enable = false;
 
+  programs.virt-manager.enable = true;
   virtualisation = {
+    libvirtd = {
+      enable = true;
+    };
     podman = {
       enable = true;
 

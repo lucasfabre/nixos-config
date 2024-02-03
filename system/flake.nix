@@ -24,6 +24,7 @@
         modules = [
           ./jack/configuration.nix
           ./base.nix
+          # ./kde.nix
           ./gnome.nix
         ];
       };

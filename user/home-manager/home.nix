@@ -27,20 +27,47 @@
 
 
   home.packages = with pkgs; [
-    neovim
-    vscode
+    # UI
     gnome.gnome-tweaks
     gnome-extension-manager
-    papirus-icon-theme
     colloid-icon-theme
-    unzip
-    oh-my-posh
-    dconf
     nerdfonts
+    gradience
+
+    # Dev Apps
+    neovim
+    vscode
+    github-desktop
+    github-cli
+    github-copilot-cli
+    gitAndTools.gitflow
+    lazygit
+ 
+    # Utils
+    tldr
+    rclone
+    unzip
+    htop
+    distrobox
+    gamescope
+
+    # Apps
+    dconf
+
+    # Games
+    wine
+    winetricks
+    protontricks
+    steamtinkerlaunch
+
+    # Dev env
+    vagrant
+    kubernetes
+    helm
+    oh-my-posh
     clang
     nodejs
     python3
-    rclone
     ripgrep
     silver-searcher
     delta
@@ -52,22 +79,8 @@
     jq
     zoxide
     thefuck
-    tldr
     neofetch
     nnn
-    htop
-    distrobox
-    gamescope
-    wine
-    winetricks
-    protontricks
-    steamtinkerlaunch
-    lazygit
-    github-desktop
-    github-cli
-    github-copilot-cli
-    gitAndTools.gitflow
-    gradience
   ];
 
   # Package overlay
