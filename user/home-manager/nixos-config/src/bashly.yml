@@ -1,0 +1,39 @@
+name: nixos-config
+help: Edit nixos configuration easily
+version: 0.1.0
+
+commands:
+- name: system
+  help: Nixos system config
+  environment_variables:
+    - name: nix_system_configuration_path
+      default: /home/lucas/Workspace/github.com/lucasfabre/nixos-config/system
+  commands:
+    - name: edit
+      help: Edit system config
+    - name: apply
+      help: Apply new system config
+
+- name: home-manager
+  help: Home-manager configuration
+  environment_variables:
+  - name: nix_homemanager_configuration_path
+    default: /home/lucas/Workspace/github.com/lucasfabre/nixos-config/user/home-manager
+  commands:
+    - name: edit
+      help: Edit home-manager configuration
+    - name: apply
+      help: apply home manager configuration
+
+- name: git
+  help: Git management
+  environment_variables:
+  - name: git_tool
+    default: lazygit
+  - name: repo_path
+    default: /home/lucas/Workspace/github.com/lucasfabre/nixos-config/
+ 
+
+- name: completions
+  help: Print bash completions
+ 

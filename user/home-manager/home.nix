@@ -1,5 +1,4 @@
 { config, pkgs, lib, ... }:
-
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -81,6 +80,7 @@
     thefuck
     neofetch
     nnn
+    nixos-config
   ];
 
   # Package overlay
@@ -108,6 +108,7 @@
           libsass
         ];
       };
+      nixos-config = pkgs.callPackage ./nixos-config/package.nix {};
     })
   ];
 
