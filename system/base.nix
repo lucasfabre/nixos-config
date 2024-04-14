@@ -40,6 +40,7 @@
     packages = with pkgs; [
       noto-fonts
       noto-fonts-emoji
+      monaspace
     ];
   };
 
@@ -74,6 +75,15 @@
 
   services.dbus.enable = true;
   programs.noisetorch.enable = true;
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc
+    zlib
+    fuse3
+    zlib
+    openssl
+    curl
+  ];
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.lucas = {
@@ -82,7 +92,7 @@
     createHome = true;
     shell = pkgs.zsh;
     home = "/home/lucas";
-    extraGroups = [ "wheel" "networkmanager" "libvirtd" "qemu-libvirtd" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "networkmanager" "libvirtd" "qemu-libvirtd" "docker" ]; # Enable ‘sudo’ for the user.
     packages = with pkgs; [
       pkgs.zsh
     ];
@@ -119,17 +129,6 @@
   virtualisation = {
     libvirtd = {
       enable = true;
-    };
-    podman = {
-      enable = true;
-
-      # Create a `docker` alias for podman, to use it as a drop-in replacement
-      dockerCompat = true;
-
-      # Required for containers under podman-compose to be able to talk to each other.
-      defaultNetwork.settings = {
-        dns_enabled = true;
-      };
     };
   };
 

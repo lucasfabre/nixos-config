@@ -30,6 +30,7 @@
     gnome.gnome-tweaks
     gnome-extension-manager
     colloid-icon-theme
+    fluent-icon-theme
     nerdfonts
     gradience
 
@@ -49,8 +50,10 @@
     htop
     distrobox
     gamescope
+    wl-clipboard
 
     # Apps
+    wezterm
     dconf
 
     # Games
@@ -65,6 +68,7 @@
     helm
     oh-my-posh
     clang
+    clang-tools
     nodejs
     python3
     ripgrep
@@ -81,6 +85,8 @@
     neofetch
     nnn
     nixos-config
+
+    lua-language-server
   ];
 
   # Package overlay
@@ -109,6 +115,12 @@
         ];
       };
       nixos-config = pkgs.callPackage ./nixos-config/package.nix {};
+      catppuccin-gtk = prev.catppuccin-gtk.override {
+        accents = [ "peach" ]; # You can specify multiple accents here to output multiple themes
+        size = "standard";
+        tweaks = [ ]; # You can also specify multiple tweaks here
+        variant = "macchiato";
+      };
     })
   ];
 
@@ -128,6 +140,19 @@
     extraOptions = [
       "--gui-address=127.0.0.1:8384"
     ];
+  };
+
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Catppuccin-Macchiato-Standard-Peach-Dark";
+      package = pkgs.catppuccin-gtk.override {
+        accents = [ "peach" ];
+        size = "standard";
+        tweaks = [  ];
+        variant = "macchiato";
+      };
+    };
   };
 
   # You can also manage environment variables but you will have to manually
@@ -150,6 +175,12 @@
     XDG_BIN_HOME    = "$HOME/.local/bin";
 
     STEAM_EXTRA_COMPAT_TOOL_PATHS = "$HOME/.local/share/Steam/compatibilitytools.d/";
+  };
+
+  xdg.configFile = {
+    "gtk-4.0/assets".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/assets";
+    "gtk-4.0/gtk.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk.css";
+    "gtk-4.0/gtk-dark.css".source = "${config.gtk.theme.package}/share/themes/${config.gtk.theme.name}/gtk-4.0/gtk-dark.css";
   };
 
   # Let Home Manager install and manage itself.

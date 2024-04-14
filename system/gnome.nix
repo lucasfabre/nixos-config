@@ -40,6 +40,7 @@
     gnomeExtensions.tiling-assistant
     gnomeExtensions.gsconnect
     gnomeExtensions.gamemode-indicator-in-system-settings
+    gnomeExtensions.open-bar
     gnome.gnome-terminal
   ];
 }

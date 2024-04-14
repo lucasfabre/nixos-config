@@ -13,7 +13,7 @@
 
   # Enable the KDE Desktop Environment.
   services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.desktopManager.plasma6.enable = true;
 
   #qt = {
   #  enable = true;
@@ -37,7 +37,6 @@
   };
 
   environment.systemPackages = with pkgs; [
-    latte-dock
     libsForQt5.discover
   ];
 }
