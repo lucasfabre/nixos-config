@@ -12,7 +12,7 @@
   # You should not change this value, even if you update Home Manager. If you do
   # want to update the value, then make sure to first check the Home Manager
   # release notes.
-  home.stateVersion = "24.05";
+  home.stateVersion = "25.05";
 
   nixpkgs.config.permittedInsecurePackages = [
   ];
@@ -36,14 +36,17 @@
 
     # Dev Apps
     neovim
+    helix
     vscode
     github-desktop
     github-cli
     github-copilot-cli
     gitAndTools.gitflow
     lazygit
+    devenv
  
     # Utils
+    zellij
     tldr
     rclone
     unzip
@@ -63,12 +66,14 @@
     steamtinkerlaunch
 
     # Dev env
-    vagrant
     kubernetes
     helm
     oh-my-posh
     clang
     clang-tools
+    yaml-language-server
+    helix-gpt
+    nil
     nodejs
     python3
     ripgrep
@@ -166,7 +171,7 @@
   #
   # if you don't want to manage your shell through Home Manager.
   home.sessionVariables = {
-    EDITOR = "nvim";
+    EDITOR = "hx";
 
     XDG_CACHE_HOME  = "$HOME/.cache";
     XDG_CONFIG_HOME = "$HOME/.config";
